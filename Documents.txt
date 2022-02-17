@@ -1,0 +1,133 @@
+
+1.read command 
+ 
+The read command reads one line from standard input and assigns the value of each field in the input line to ashell a variable useing the charecters.
+
+we make any shellscript interactive mood using read command.
+
+First Example : write a shellscript accept the username from the person and you have display back in the same 
+
+echo " please enter your name"
+read name
+echo "the name which you have entered:"$name
+
+second Example : write a shellscrift for display one user variable using array.
+
+echo "please enter the devopstools"
+read -a devopstools
+echo " the devops tools which you are typed one:"{$devopstools[*]}
+echo "the 5th devops tools from your input is:"${devopstools[4]}
+
+where '-a' is the array
+we are using number of values instad of using the variable array
+
+example :
+
+ read -p "enter the your bank user name:"username
+ read -sp "please enter the bank password:"password
+ echo "username which you have typed is:"$username
+ echo "the password which you have typed is:"$password
+
+
+
+2.expalaining the pipe commands and usages
+
+Pipe is used to combine two or more commands, and in this, the output of one command acts as input to another command, 
+and this command’s output may act as input to the next command and so on.
+It can also be visualized as a temporary connection between two or more commands/ programs/ processes. 
+
+ls -is a list of files 
+wc -l how many words and how many lines in the list
+
+The pipe has much functionality used to filter, sort, and display the text in the list. 
+One of the common examples is described here.
+Suppose we have a file named file1.txt having the names of the students. 
+We have used the cat command to fetch the record of that file.
+example : 
+Ajay
+mahesh
+zeera
+fatima
+nexus
+india
+
+the data present in this files unodered so to sort the data, we need to fallow a piece of code
+
+$ cat files.txt|sort
+
+through the respective output , you can see names are arraged alphabatically in sequence of a to z
+
+
+4. how to check current shell
+
+echo $0
+ps -p$$
+echo $shell
+
+
+5.command line arguments
+ 
+while executing the shellscrifts passing the values through command promt is called " command line arguments"
+
+can i pass n number of arguments ?
+ yes it is possible but each arguments separated by the space
+
+example : sh arguments.sh argname1  argname2
+
+echo $1
+echo $2
+echo $3
+echo $4
+.
+.
+.
+.
+if arguments is above 1 digit
+echo ${10}.
+
+
+example : shellscript for command line arguments
+
+if[$# -eq 2]
+echo "scrift file name" $0
+echo "first arg " $1
+echo "second arg " $2
+echo "third arg " $3
+echo "10 th arg " ${10}
+echo "number of args" $#
+echo "all the args"$*
+echo "all the args"$@
+echo "PID"$$
+date
+echo "privious command execution status"$?
+fi
+
+
+5.control commands -if
+
+systax 
+
+if condition
+then
+display commands list if condtion is true
+else
+disply commands list if condtion is false 
+fi
+
+1.example :write a shellscipt find the which number is bigger from the two numbers
+a=10,b=20
+
+if[$a -gt $b]
+then
+echo "$a is bigger than $b"
+else
+echo"$b is bigger than $b"
+fi.
+
+
+
+
+
+
+
+

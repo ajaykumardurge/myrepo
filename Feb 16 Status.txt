@@ -1,0 +1,162 @@
+GIT
+-------------------
+
+Version control systems are tools that help a software team manage changes to source code over time.
+
+For almost all software projects, the source code is like the crown jewels - a precious asset whose value must be protected. 
+
+VCS are sometimes known as SCM (Source Code Management) tool.
+
+Most widely used modern version control system in the world today is Git. Git is a mature, actively maintained open source tool originally developed in 2005 by Linus Torvalds, the famous creator of the Linux operating system kernel. 
+
+Two types Version Controlloing
+1) Centrailized Version controlling 
+2) Distributed Version controlling
+
+Git is Distributed Version controlling.
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+What is gitbash ?
+
+How to configure username and email for git
+
+$ git init : by using git init initialise the git repository in local
+
+
+$ git config --global   user.name "dajaykumard@gmail.com"
+$ git config --global   user.email  "dajaykumard@gmail.com"
+
+by using this command we can configure username and email
+
+ TO check the configurations
+
+$ git config  --global  --list
+
+in git we have mainly three areas that is 
+
+working directory ------> staging area -------> local repository
+
+untracked files
+staged files
+commited files
+
++++++++++++++
+
+How to make working directory as git repository
+
+$ git init
+
+-Observation -
+
+++++++++++++++++
+
+$  git status
+
++++++++++++++++++
+To move file to staging area
+
+$ git  add  f1
+
+$  git  add   f2  f3
+
+$ git  add  .
+
+
+++++++++++++++++
+Bring file back to untracked section
+
+$ git rm  --cached f1
+
+or
+
+$ git reset  f2 
+
+++++++++++++++++++++
+To move the files from staging are to LR
+
+$ git  commit  -m  "first commit"
+
+$ git status
+
++++++++++++++++++++
+To see the list of commit
+
+$ git log
+
++++++++++++++++++++
+remaining files I want to move to LR
+
+$ git  add .
+$ git commit -m  "second commit"
+
+$ git log
+(or)
+git log --oneline
+
+
+$  git status
+
+++++++++++++++++++
+Notes
+1) Setting username and email
+
+2) As per git , there are three comopnents
+working directory  --  untracked files
+staging area  -- staged files
+LR  -- commited files
+
+3) commands
+To initilize working directory as git repo
+To move files to staging are
+To bring back files from staging to untracked sectiion
+To move files from staging to LR
+To check the status of untracked files and staged files
+To see the commit history
+
+ Commands
+
+  git status
+  507  git add .
+  508  git status
+  509  git commit -m "some message"
+  510  git status
+  511  git log
+  512  git remote add orgin https://github.com/ajaykumardurge/myrepo.git
+  513  git push -u origin master
+  514  git remote add origin https://github.com/ajaykumardurge/myrepo.git
+  515  git push -u origin main
+
+
+Branching
+--------------
+
+This feature is provided in git, so that developers can create code related to different functionalities  on seprate branches.
+This helps the development team in creating the code in an uncluttered way.
+Later this code can be merged with master branch.
+Default branch of git is "Master"
+
+
+Developer
+
+Home Page   --  f1  f2   f3
+Services   --  f4  f5
+Contact US  --  f6  f7   f8
+
+branch
+
+
+git  init  --  master
+
++++++++++++++++++++++++++++++++++
+
+
+git branch  branchname 
+
+git  branch test
+
+++++++++++++++
+
+
+
+

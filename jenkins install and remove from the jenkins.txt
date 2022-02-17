@@ -1,0 +1,148 @@
+remove jenkins files from the linux
+
+ Overview
+Jenkins is an open-source Java project to achieve automation. It helps speed up the software delivery pipeline using the continuous integration, continuous delivery, and continuous deployment methodology. Jenkins has very active community support, hence it is the most widely used automation solution.
+
+In this tutorial, we’ll learn to remove the Jenkins setup completely from our machine. Specifically, we’ll focus on removing the Jenkins package, users, and the directory structure created by Jenkins.
+
+Before we proceed further, let’s look into different types of Jenkins installation possible in Linux.
+
+
+
+
+2. Types of Jenkins Installations
+
+
+
+Jenkins, being a Java project, requires java on the system. 
+There are three different ways to install Jenkins on a Linux machine.
+
+2.1. Using Package Manager
+
+This method serves as an industry standard to install any package in Linux. 
+It is the simplest and most common way to set up Jenkins on Linux.
+
+A package manager helps us install, upgrade, and remove the packages from Linux.
+
+First, we need to download the Jenkins repository file.
+ Then we can install Jenkins using the yum package manager for the CentOS/Fedora and apt package manager for Ubuntu.
+
+2.2. Jenkins as an Embedded Server Using a WAR file
+We can run Jenkins using the latest stable Web application ARchive (WAR) file. 
+Using this method, Jenkins will run as a standalone application with the Jetty server.
+
+This is a minimal type of Jenkins setup which we generally use in the testing environment. Here is the complete guide on how to deploy Jenkins using WAR file.
+
+2.3. Jenkins Deployed on Tomcat
+Apache Tomcat server can easily run the Jenkins application. 
+All we need to do is deploy the Jenkins WAR file into the Apache server webapps folder. The webapps folder is present inside the $CATALINA_HOME.
+
+
+freestar
+Alternatively, we can also deploy it on the GlassFish server if required.
+
+
+3. Remove Jenkins Installation Using Package Manager
+Let’s now look into the steps to remove the Jenkins setup that was installed using the package manager. 
+We’ll be using the package manager itself to remove the setup.
+
+
+3.1. Stop Jenkin Server
+First, stop the Jenkins service if it’s already running using the systemctl stop jenkins or service jenkins stop command.
+
+3.2. Remove Jenkins Package
+Let’s run the command to remove the Jenkins package from the CentOS/Fedora machine:
+
+$ sudo yum -y remove jenkins
+Likewise, we use apt-get package manager instead of the yum in Ubuntu:
+
+
+freestar
+$ sudo apt-get remove --purge jenkins
+The apt-get remove command will remove all the Jenkins package groups and other dependent packages. In addition, the –purge option is used to delete the configuration files from the machine.
+
+3.3. Remove the Jenkins Working Directory
+A working directory stores all the logs, configurations, and build artifacts. By default, it is set to /var/lib/jenkins:
+
+$ ls /var/lib/jenkins
+config.xml  hudson.model.UpdateCenter.xml  identity.key.enc  jenkins.telemetry.Correlator.xml  jobs  nodeMonitors.xml  nodes  plugins  secret.key  secret.key.not-so-secret  secrets  updates  userContent  users
+We’ll need to remove the Jenkins working directory manually as a part of the cleanup process:
+
+$ rm -rf /var/lib/jenkins
+3.4. Remove User and Group
+The package manager installation of Jenkins creates a jenkins user and group. It uses this jenkins user to start the Jenkins server. It is considered a good practice to use a separate user (other than the root user) while creating any service in Linux. Various standard services, including Docker, apache2, httpd, etc., use the same concept when installed on the Linux machine.
+
+Let us now remove the Jenkins user and group created by the package manager:
+
+$ sudo getent passwd | grep jenkins
+jenkins:x:978:974:Jenkins Automation Server:/var/lib/jenkins:/bin/false
+$ sudo getent group | grep jenkins
+jenkins:x:974:
+$ sudo userdel jenkins
+$ sudo getent passwd | grep jenkins
+$ sudo getent group | grep jenkins
+
+Here, we have used the userdel command to remove the user and the group. 
+The output of the getent passwd and getent group command was empty. 
+Hence, it confirms the successful deletion of the Jenkins user and group.
+
+This ensures the complete removal of the Jenkins setup, which was done using the package manager.
+
+
+4. Remove Jenkins WAR Setup
+As discussed above, in the WAR setup, the Jenkins application uses the embedded Jetty server.
+ In this approach, we start the server by using the java -jar command. In order to remove the setup, we first need to kill that java process.
+
+
+4.1. Find and Kill the Jenkins Process
+To stop/kill the java process, we first need to get the process id (PID):
+
+$ ps -ef | grep jenkins
+ubuntu 14433 8171 32 14:54 pts/0 00:00:43 java -jar jenkins.war
+ubuntu 14824 14618 0 14:57 pts/1 00:00:00 grep --color=auto jenkins
+Here, the process id for the Jenkins process is 14433. Let’s now kill this process using the kill command:
+
+$ sudo kill -9 14433
+The -9 option instructs the kernel to forcefully remove the process.
+
+4.2. Remove the Jenkins Working Directory
+Let us now clean up the working directory of Jenkins. The default used is $HOME/.jenkins for the Linux environment.
+
+$ rm -rf /root/.jenkins/
+Here the $HOME value is /root. So, this will remove the working directory /root/.jenkins.
+
+In this case, we can run the WAR using an existing user. Hence there is no need to remove a specific user as a part of the cleanup.
+
+5. Remove Jenkins Setup from Tomcat
+In this kind of setup, we assume the Jenkins server to be running on the Apache Tomcat server. Therefore, to remove a Jenkins setup, we need to remove the deployment of the Jenkins WAR file inside the webapps directory of the Tomcat.
+
+5.1. Stop Apache Tomcat Server
+First, we’ll stop the Tomcat server if its already running:
+
+$ cd $CATALINA_HOME/bin
+$ bash catalina.sh stop
+Here $CATALINA_HOME denotes the Apache installation directory.
+
+5.2. Cleanup Webapps Directory
+Let’s now remove the Jenkins WAR file from the Apache Tomcat webapps directory:
+
+$ cd $CATALINA_HOME/webapps
+$ rm -rf jenkins.war jenkins
+In our case, the Jenkins WAR file is named jenkins.war, and the jenkins directory is created after unpackaging the WAR file. The Tomcat server does this implicitly.
+
+5.3. Remove the Jenkins Working Directory
+On running too many builds or installing a lot of plugins, the working directory size eventually increases. This leads to problems like “Disk space is too low”. Hence, it is recommended to remove the working directory as a part of the Jenkins cleanup process:
+
+$ rm -rf /root/.jenkins/
+
+The default working directory used by Tomcat is $HOME/.jenkins/
+
+6. Conclusion
+In this tutorial, firstly, we learned different ways to install Jenkins on Linux. Then, for each installation type, we looked into the steps to remove the setup. Apart from removing the Jenkins setup, we also cleaned up the configurations created while installing/using Jenkins.
+
+There is no way to recover that data after clean-up because we have removed the working directory permanently.
+
+The process discussed above ensures the complete removal of Jenkins from the machine.
+
+If you have a few years of experience in the Linux ecosystem, and you’re interested in sharing that experience with the community, have a look at our Contribution Guidelines.
+

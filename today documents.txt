@@ -1,0 +1,152 @@
+ 1.mkdir - create a working directory
+
+    some of options with  mkdir
+
+   -p ----> if the parent directories don't exist , this commands create them
+   -v ----> print a message for each cerated directory
+
+           Examples :
+
+          1.mkdir ajay
+            ls
+            mkdir -v devops
+            ls
+   I want create a directory inside the devops for that we have use below command
+   mkdir -v devops/linux/shellscift/git/maven/tomacat
+
+2.Create a file - touch command
+
+The touch command allows you to create a blank new file through the Linux command line. As an example, 
+
+     create a file with touch command 
+     touch f2
+     
+
+3. cat cammand
+
+cat command is used to creat a file in the linux 
+ cat > f1
+   i want to save some data 
+   hello all
+   good evening
+   welcome to linux.
+to come out from the cat command have to use cntl+d
+ 
+4.chown command
+
+change file owner and group 
+# ls-l
+#chown ajay.txt
+# ls-l
+only root user can execute this 
+
+5 . cp 
+
+it will copy file one directory to another directory
+
+example :
+
+cp text.txt/devops
+
+6. vi
+
+ a programmer text editor 
+ # vi shellscript 
+ then enter "insert" key or "i" ,
+ now you are above to type text into that file 
+ once it finishes press "esc" button and type ":" and type "wq"
+ option "q" is only for simply quite without save 
+ 
+
+7.  rmdir
+
+Delete a directory , the rm command is used to delete directories and the contents within them. 
+If you only want to delete the directory — as an alternative to rmdir — use rm -r.
+
+Note: Be very careful with this command and double-check which directory you are in. This will delete everything and there is no undo.
+
+
+8.ls command
+display list of files 
+
+ls-l ---> long listing files 
+
+9.pwd 
+
+ moves to where we are current working directory
+
+10.wget command
+The Linux command line is super useful — you can even download files from the internet with the help of the wget command.
+ To do so, simply type wget followed by the download link.
+
+11.. history command
+When you’ve been using Linux for a certain period of time, 
+you’ll quickly notice that you can run hundreds of commands every day. As such, 
+running history command is particularly useful if you want to review the commands you’ve entered before.
+
+12.. echo command
+This command is used to move some data into a file. For example, if you want to add the text,
+ 
+echo " hello everyone"
+echo " good morning/good afternoon/good evening"
+echo " today date is"
+echo " welcome to shellscript"
+
+13.. hostname command
+
+If you want to know the name of your host/network simply type hostname. 
+Adding a -i to the end will display the IP address of your network.
+
+14. wget command
+
+The Linux command line is super useful — you can even download files from the internet with the help of the wget command. 
+To do so, simply type wget followed by the download link.
+
+15. sudo command
+Short for “SuperUser Do”, this command enables you to perform tasks that require administrative or root permissions. 
+However, it is not advisable to use this command for daily use because it might be easy for an error to occur if you did something wrong.
+execute a command as a another user
+
+16. su command
+
+to switch user , to come out from the user press cntl+d , logout, exit .
+
+
+17.cd 
+
+to change working directory
+
+cd directory name 
+cd path/ directory name 
+
+18. kill command
+
+If you have an unresponsive program, you can terminate it manually by using the kill command. 
+It will send a certain signal to the misbehaving app and instructs the app to terminate itself.
+
+19.df command
+
+this command used for report file systems disk space uses .
+
+20. ping command
+
+Use the ping command to check your connectivity status to a server.
+For example, by simply entering ping google.com, the command will check whether you’re able to connect to Google and also measure the response time.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,867 @@
+
+ Ansible installation
+
+Mater node
+
+sudo yum update
+
+sudo yum install ansible -y 
+
+or
+
+"sudo dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm -y"
+
+which ansible : This is the command where ansible installed 
+home directory: user/bin/ansible: ansible file system location 
+
+
+Ansible version: ansible--version
+
+
+history
+=========
+ 1  visudo
+    2  yum update -y
+    3  wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    4  --2020-01-21 09:54:33-- https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    5  ls
+    6  yum install epel-release-latest-7.noarch.rpm
+    7  yum update -y
+    8  yum install git python python-devel python-pip openssl ansible -y
+    9  ansible --version
+   10  history
+
+
+ansible 2.9.6
+config file = /etc/ansible/ansible.cfg
+configured module search path = ['/root/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
+ansible python module location = /usr/lib/python3/dist-packages/ansible
+executable location = /usr/bin/ansible
+python version = 3.8.5
+
+sudo vim /etc/anisble/hosts
+sudo ssh-copy-id -i ~/.ssh/id_rsa.pub woker@172.31.7.204
+password less authentication
+sudo ssh-keygen==master
+   16  sudo ssh-copy-id -i ~/.ssh/id_rsa.pub woker@172.31.7.204
+   17  sudo ssh-copy-id -i ~/.ssh/id_rsa.pub woker@172.31.7.204
+   18  cd /etc/ssh/
+   19  vim sshd_config
+   20  service sshd restart
+   21  sudo ssh-copy-id -i ~/.ssh/id_rsa.pub woker@172.31.7.204
+   22  ssh-copy-id worker@172.31.7.204
+   23  ssh worker@172.31.7.204
+
+ansible-playbook -i hosts tomcat.yml
+
+ssh worker@172.31.7.204
+
+
+The main configuration file is stored 
+
+The main configuration file is stored in /etc/ansible/hosts file.
+
+To know the installed packagesversion list
+--------------------------------------------
+"sudo yum --duplicate list packagename(git,java)"
+
+
+host inventory file location: /etc/ansible
+vi /etc/ansible/hosts
+ansible all -i /etc/ansible/hosts -m moduel -a argument -b 
+
+To list modules
+-------------------
+"ansible-doc -l"
+
+To know more about the module
+----------------------------
+"ansible-doc <module name>"
+"ansible-doc -s <module name>"
+"ansible-doc -i -t <type of module>      (Ex:'become', 'cache', 'callback', 'cliconf', 'connection', 'httpapi', 'inventory', 'lookup', 'netconf', 'shell', 
+                                              'module', 'strategy', 'vars')
+
+
+
+Important points :
+-----------------
+--> ansible modules are idempotent (i,e if condigurations are already exits it does not go any changes)
+--> -b or --become gives previlage escalation.
+--> we can give previlage escalation at task and playbook level.
+--> autoremove = yes it remove all dependencies.
+--> remote_src = yes to fetch data from remote servers
+--> we have to gatherfacts, to define system variables. like os,distribution
+--> set_facts module is used to set our own variables and key value pairs of current host M/C.
+--> in ansible we have both default host file and custom host file. while reffreing custom host file use like this  "-i path/filename" also for variables both
+    group_vars and host_vars should be created in this location only.
+
+
+
+
+
+To run playbook
+-----------------
+"ansible-playbook <playbookname>.yml"
+
+To check syntax-error
+----------------------
+"ansible-playbook <playbookname>.yml --syntax-check"
+
+To dry run
+------------------------
+"ansible-playbook <playbook>.yml --check"
+
+Verbos
+-------
+verbos are used to get logs while configuring or running tasks
+
+"ansible-playbook <playbook>.yml -v"
+"ansible-playbook <playbook>.yml -vv"
+"ansible-playbook <playbook>.yml -vvv"
+
+To run each task step by step with manual intervention
+----------------------------------------------------
+"ansible playbook <playbook>.yml --step"
+
+To list tags
+---------------------
+"ansible-playbook <playbook>.yml --list-tags"
+
+Run playbook with tags
+---------------------
+"ansible-playbook <playbook>.yml --tags "<tagname>""
+
+Run playbook without tags
+-------------------------
+"ansible-playbook <playbook>.yml --skip-tags "<tagname>"" 
+
+
+Whys to set variables in ansible. And also priority as same.
+-----------------------------
+1) run time variables
+2) playbook defined variables
+3) host vars
+4) group vars
+     |
+     |___> 1)specific group
+           2)all 
+
+
+      
+The scope of variables.
+--------------------
+1)group_vars: By defining variables in this group_vars folder, can we refer this variables at group level irrespective of playbook which we are executing.
+-->location of group_vars folder : /etc/ansible/group_vars
+-->The variables are defined in yml file on the name of that group. Ex.groupname.yml 
+-->Location of this groupname.yml file is: /etc/ansible/group_vars/groupname.yml
+ 
+
+2)host_vars: By defining variables in this host_vars folder, can we refer this variables at host level irrespective of playbook which we are executing.
+-->location of host_vars folder : /etc/ansible/host_vars
+-->The variables are defined in yml file on the name of that host. Ex.hostname.yml 
+-->Location of this hostname.yml file is: /etc/ansible/host_vars/hostname.yml
+ 
+
+Ansible-vault: It is used to enrypt the confidential information. files like secretes and variables in group and hostvars are encrypted.
+------------
+"ansible-vault encrypt <filename>"  --> for encryption, it asks password to set.
+"ansible-vault create <filename>"   --> for creating and encrypting
+"ansible_vauit edit <filename>"     --> for edit
+"ansible-vault view <filename>"     --> seen in humanreadable format
+"ansible-vault decrypt <filename>"  --> for decrypt
+"ansible-vault rekey <filename>"    --> to reset the password of vault 
+
+For asking ansible-vault password use below command
+-----------------------------------------------
+"ansible-playbook alias.yml --ask-vault-pass"
+
+For eliminating human intervention for above command we setting password in file ( vi vaultpass) and passing this file through command.let see that in below command.
+
+"ansible-playbook alias.yml --vault-password-file=~/vaultpass"
+
+*******************************************************************************************************************************************************************
+
+Ansible Roles
+--------------------
+Used to configure in effective manner.
+
+"ansible-galaxy init <rolename>"
+
+structure of role
+-------------------
+rolename
+├── defaults 
+│   └── main.yml ------> variables
+├── files        ------> all fetched and copied files are stored
+├── handlers
+│   └── main.yml ------> handlers only. notifier specified in tasks.
+├── meta
+│   └── main.yml ------> metadata
+├── README.md
+├── tasks
+│   └── main.yml ------> tasks
+├── templates    ------> templates files
+├── tests
+│   ├── inventory 
+│   └── test.yml ------> we can test this role locally
+└── vars
+    └── main.yml -----> vairables
+
+
+"ansible-playbook -b -i rolename/tests/inventory  rolename/tests/tests.yml"  
+
+playbook for testing at locally.
+test.yml
+--------------
+-hosts: localhost
+ remote_user: root
+ roles: 
+  - rolename
+..............
+
+
+This are the following role folders where used for both testingplaybook and mainplaybook 
+
+inventory file
+---------------
+localhost ansible_connection=local  -------> this inventory file by default used for localhost m/c.
+
+...............
+
+vars/main.yml
+----------------
+name: suresh
+package: nginx
+...............
+
+tasks/main.yml
+--------------
+   - name: install inginx
+     yum:
+      name: "{{package}}"
+      state: present
+   - name: copy files
+     template:
+      src: index.html
+      dest: /usr/share/nginx/html/index.html
+   - name: restart
+     service:
+      name: nginx
+      state: started
+     notify:
+      - message
+.....................
+
+handlers/main.yml
+------------------
+   - name: message
+     debug:
+      msg: hi hello everyone
+................
+
+templates
+-----------
+index.html
+.............
+
+mainplaybook which we are actually used.
+mainplaybook.yml
+--------------
+- hosts: appserver
+  become: yes
+  roles:
+   - rolename
+..............
+
+**********************************************************************************************************************************************************************
+
+Dynamic inventory in AWS
+-------------------
+"sudo yum install -y python3"
+"pip3 install --user boto3"
+"pip3 install --upgrade requests --user"
+
+vi inventory_aws_ec2_.yml  --->this is not playbook. it is Dynamicinventoryfile.
+-------------------
+plugin: aws_ec2  ---> This is plugin has boto3 code
+regions:
+ - ap-south-1
+filters:
+ instance-state-name: running
+keyed_groups:
+ - key: tags.Name
+   separator: ""
+   prefix: ""
+hostnames:
+ - private-ip-address
+compose:
+ ansible_host: private_ip_address
+...........
+
+---> creae IAM role of Amazonec2readonlyaccess and attach to ansible controller node.
+
+"ansible-inventory -i inventory_aws_ec2.yml --graph"
+"ansible  -i inventory_aws_ec2.yml all -m ping -u=ec2-user --private-key=~/Devops.pem"
+..................................................
+
+
+handlers
+------------------------------------
+- hosts: all
+  become: yes
+  tasks:
+   - name: install inginx
+     yum:
+      name: nginx
+      state: present
+   - name: copy files
+     copy:
+      src: index.html
+      dest: /usr/share/nginx/html/index.html
+   - name: restart
+     service:
+      name: nginx
+      state: started
+     notify:
+      - message
+  handlers:
+   - name: message
+     debug:
+      msg: hi hello everyone
+
+..........................................................................
+
+nginx
+-------------------------
+- hosts: appserver
+  become: yes
+  tasks:
+   - name: install nginx
+     yum:
+      name: nginx
+      state: absent
+   - name: copy
+     copy:
+      src: index.html
+      dest: /usr/share/nginx/html/index.html
+   - name: start nginx
+     service:
+      name: nginx
+      state: stopped
+........................................................................
+
+file module
+---------------------------------------------------------------
+- hosts: all
+  become: yes
+  tasks:
+   - name: uninstall
+     yum:
+      name: httpd
+      state: absent
+   - name: remove files
+     file:
+      name: index.html
+      state: absent
+................................
+
+template module
+--------------------------------------------------------------------
+- hosts: all
+  become: yes
+  tasks:
+   - name: install httpd
+     yum:
+      name: httpd
+      state: present
+   - name: copy index.html
+     template:
+      src: index.html
+      dest: /var/www/html/index.html
+   - name: restart service
+     service:
+      name: httpd
+      state: started
+................................
+
+fetch module
+------------------------------------------------------------------
+- hosts: 172.31.40.229
+   become: yes
+   tasks:
+    - name: fetching
+      fetch:
+       src: /home/ec2-user/devops
+       dest: /home/ansible/devops
+
+....................................
+
+jenkins.yml
+----------------------------------------------------------------
+- hosts: jenkinsserver
+  become: yes
+  vars:
+   workspace: /home/ec2-user
+  tasks:
+   - name: copyjenkins
+     copy:
+      src: /home/ansible/jenkins.sh
+      dest: /home/ec2-user/jenkins.sh
+   - name: install
+     shell: |
+      sh {{workspace}}/jenkins.sh
+      sh echo {{workspace}}
+
+.................................
+
+tags
+---------------------------------------------------------------
+- hosts: all
+  become: yes
+  tasks:
+   - name: install nginx
+     tags:
+      - step1
+     yum:
+      name: nginx
+      state: absent
+   - name: file location
+     tags:
+      - step2
+     file:
+      path: /usr/share/nginx/html/index.html
+      state: absent
+   - name: start nginx
+     tags:
+      - step3
+     service:
+      name: nginx
+      state: started
+............................
+
+httpd
+--------------------------------------------------------
+- hosts: all
+  become: yes
+  tasks:
+   - name: Install httpd
+     yum:
+      name: httpd
+      state: absent
+   - name: copy file
+     copy:
+      src: index.html
+      dest: /var/www/html/index.html
+   - name: restrt
+     service:
+      name: httpd
+      state: stopped
+..............................
+
+loops
+-----------------------------------------------------------
+- hosts: appserver
+  become: yes
+  tasks:
+   - name: install
+     yum:
+      name: "{{item}}"
+      state: present
+     with_items:
+      - wget
+      - git
+      - vim
+      - unzip
+...............
+- hosts: jenkinsserver
+  become: yes
+  tasks:
+   - name: install
+     yum:
+      name: "{{item}}"
+      state: present
+     with_items:
+      - ["wget","git","vim","unzip"]
+......................
+- hosts: jenkinsserver
+  become: yes
+  tasks:
+   - name: install
+     yum:
+      name: ["wget","git","vim","unzip"]
+      state: present
+.....................
+- hosts: jenkinsserver
+  become: yes
+  tasks:
+   - name: install
+     yum:
+      name: ['wget','git','vim','unzip']  --------------> list
+      state: present
+
+...............................................
+- hosts: all
+  become: yes
+  tasks:
+   - name: copy files
+     copy:
+      src: "{{item.source}}"
+      dest: "{{item.destination}}"
+     with_items:
+      - {"source":"abc.txt","destination":"/tmp/abc.txt"}  ----------------> dictionery
+      - {"source":"abc.xml","destination":"/tmp/abc.xml"}
+.....................
+- hosts: all
+  become: yes
+  tasks:
+   - name: copy files
+     copy:
+      src: "{{item.source}}"
+      dest: "{{item.destination}}"
+     with_items:
+      - {'source':'abc.txt','destination':'/tmp/abc.txt'}
+      - {'source':'abc.xml','destination':'/tmp/abc.xml'}
+......................
+
+ conditions
+---------------------------------------
+- hosts: appserver
+  become: yes
+  tasks:
+   - name: find ipaddres
+     shell:  netstat -tun |  awk '{print $5}' | grep "16976" | sed 's/:16976//'
+     register: ipname
+     ignore_errors: true
+   - name: decision
+     debug:
+      msg: echo "you choosed host group is correct"
+     when: ipname.stdout == "49.207.213.65"
+...................................................
+
+group_vars
+-----------------------------------------------------
+groupname.yml
+------
+name: suresh
+......
+
+alias.yml
+------
+- hosts: appserver
+  become: yes
+  tasks:
+   - name: example of groupvars
+     debug:
+      var: name
+............................................................
+
+host_vars
+--------------------------------------------------------
+172.31.2.107.yml
+------
+name: devops
+........
+
+alias.yml
+------
+- hosts: 172.31.2.107
+  become: yes
+  tasks:
+   - name: example of groupvars
+     debug:
+      var: name
+..........................................
+
+playbook for patching linux servers
+-------------------------------------------------------------------------
+- hosts: jenkinsserver
+  become_user: root
+  serial: 2
+  tasks:
+   - name: verify application/database processes are not running
+     shell: if ps -eaf | egrep 'apache|http' | grep -v grep > /dev/null ; then echo 'process_running' ; else
+            echo 'process_not_running' ; fi
+     ignore_errors: true
+     register: app_process_check
+
+   - name: decision point to start patching
+     fail: msg="{{ inventory_hostname }} have running app, please stop apps to patch"
+     when: app_process_check.stdout == "process_running"
+
+   - name: upgrade all packages on the server
+     yum:
+      name: "kernel"
+      state: latest
+     when: app_process_check.stdout == "process_not_running" and ansible_disrtibution == 'centos' or ansible_distribution == 'Redhat
+           enterprise linux'
+     register: yum_update
+
+   - name: check if reboot required after kernel update
+     shell: KERNEL_NEW=$(rpm -q --last kernel | head -1 | awk '{print $1}' | sed 's/kernel-//') ; KERNEL_NOW = $(uname -r) ;
+                         if [[ $KERNEL_NEW != $KERNEL_NOW]] ; then echo "reboot-needed" ; else echo "reboot-not-needed" ; fi
+     ignore_errors: true
+     register: reboot_required
+
+   - name: restart system
+     command: shutdown -r +1 "rebooting system after patching"
+     async: 0
+     poll: 0
+     when: reboot_required.stdout == 'reboot-needed'
+     register: reboot-started
+     ignore_errors: true
+
+   - name: pause for 180 sec
+     pause:
+      minutes: 3
+
+   - name: check if system responding to ssh
+     local_action:
+      module: wait_for
+       host={{ inventory_hostname }}
+       port=22
+       delay=15
+       timeout=300
+       state=started
+     when: reboot_started|changed
+
+..................................................................................................................................................................
+
+monitoring cpu utilisation using playbook
+-------------------------------------------------------
+---
+- name: Linux CPU Usage Monitoring
+  hosts: all
+
+  tasks:
+    - name: 'Preparing CPU utilization for 1st sec'
+      shell: |
+        mpstat -u 1 1|tail -1| awk '{print $NF}'
+      register: cpu1sec
+
+    - name: 'preparing CPU utilization 2nd sec'
+      shell: |
+          mpstat -u 1 2|tail -1| awk '{print $NF}'
+      register: cpu2sec
+
+    - name: 'preparing CPU utilization for 3rd sec'
+      shell: |
+          mpstat -u 1 3|tail -1| awk '{print $NF}'
+      register: cpu3sec
+
+
+    - name: 'Print message if CPU utilization become normal'
+      debug:
+        msg:
+          - -------------------------------------------------------
+          - CPU Utilization = ( 100 - idle time ) = {{ cpu1sec.stdout }}% is idle
+          - -------------------------------------------------------
+      when: cpu1sec.stdout|int > 10 and cpu2sec.stdout|int > 10 and cpu3sec.stdout|int > 10
+
+    - name: 'Print message if CPU utilization become abnormal'
+      debug:
+         msg:
+           - -------------------------------------------------------
+           - CPU Utilization = ( 100 - idle time ) = "{{ item.stdout }}"% is idle
+           - -------------------------------------------------------
+      with_items:
+        - "{{ cpu1sec }}"
+        - "{{ cpu2sec }}"
+        - "{{ cpu3sec }}"
+      when: item.stdout| int <= 10
+      loop_control:
+        label: "{{ item.stdout }}"
+
+......................................................................................................................................................
+
+
+monitoring cpu utilisation and email notification
+---------------------------------------------------
+---
+- name: Linux CPU Usage Monitoring
+  hosts: all
+  vars:
+    gmail_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          37386162646531383637663131383261373433666638316438326435623330653837646233366162
+          4829204357291030405010455554614123334988987623662370a653166303237326363373736306
+          666362396439313337646130366139353939333431653716438326435623330653837646233366162
+          3239383333396631650a6563386363393437383762363438316235303932626462393931333764613
+          333764613036613343837316161356532376236343831623530393262646239623939
+
+  tasks:
+
+    - name: 'Preparing CPU utilization for 1st sec'
+      shell: |
+        mpstat -u 1 1|tail -1| awk '{print $NF}'
+      register: cpu1sec
+
+    - name: 'preparing CPU utilization 2nd sec'
+      shell: |
+          mpstat -u 1 2|tail -1| awk '{print $NF}'
+      register: cpu2sec
+
+    - name: 'preparing CPU utilization for 3rd sec'
+      shell: |
+          mpstat -u 1 3|tail -1| awk '{print $NF}'
+      register: cpu3sec
+
+    - name: 'Execute topcpu.sh script to {{ inventory_hostname }}'
+      shell: |
+        sh /home/ansibleuser/automation/mail/topcpu.sh
+
+    - name: 'Print message if CPU utilization become normal'
+      debug:
+        msg:
+          - -------------------------------------------------------
+          - CPU Utilization = ( 100 - idle time ) = {{ cpu1sec.stdout }}% is idle
+          - -------------------------------------------------------
+      when: cpu1sec.stdout|int > 10 and cpu2sec.stdout|int > 10 and cpu3sec.stdout|int > 10
+
+    - name: 'Print message if CPU utilization become abnormal'
+      debug:
+        msg:
+           - -------------------------------------------------------
+           - CPU Utilization = ( 100 - idle time ) = "{{ item.stdout  }}"% is idle
+           - -------------------------------------------------------
+      with_items:
+        - "{{ cpu1sec }}"
+        - "{{ cpu2sec }}"
+        - "{{ cpu3sec }}"
+      when: item.stdout| int <= 10
+      loop_control:
+        label: "{{ item.stdout }}"
+
+
+    - name: 'CPU utilization Monitoring via Ansible E-mail notification'
+      mail:
+        host: smtp.gmail.com
+        subtype: html
+        port: 587
+        password: "{{ gmail_password }}"
+        to: your-email-address@gmail.com
+        from: your-email-address@gmail.com
+        username: your-email-address@gmail.com
+        subject: Server {{ inventory_hostname }} having high CPU utilization and idle% is "{{ item.stdout }}"%
+        attach: /tmp/{{ ansible_hostname }}_inventory_CPU.txt
+        body: <pre> {{ lookup('file', '/tmp/{{ ansible_hostname }}_inventory_CPU.txt') }} </pre>
+      delegate_to: localhost
+      with_items:
+        - "{{ cpu1sec }}"
+        - "{{ cpu2sec }}"
+        - "{{ cpu3sec }}"
+      when: item.stdout| int <= 10
+      loop_control:
+        label: "{{ item.stdout }}"
+........................
+
+
+Tomcat
+-------
+- hosts: tag_Name_tomcatServers
+  become: true
+  tasks:
+    - name: Install Java
+      yum:
+        name: java-1.8.0-openjdk
+        state: present
+    - name: add tomcatuser
+      user:
+        name: tomcat
+        shell: /sbin/nologin
+    - name: get_installer
+      get_url:
+        url: https://archive.apache.org/dist/tomcat/tomcat-7/v7.0.76/bin/apache-tomcat-7.0.76.tar.gz
+        dest: /tmp/
+    - name: copy
+      copy:
+        src: /tmp/apache-tomcat-7.0.76.tar.gz
+        dest: /usr/local/
+        remote_src: yes
+    - name: install
+      unarchive:
+        src: /usr/local/apache-tomcat-7.0.76.tar.gz
+        dest: /usr/local
+        remote_src: yes
+    - name: Change file ownership, group and permissions
+      file:
+        path: /usr/local/apache-tomcat-7.0.76
+        owner: tomcat
+        group: tomcat
+        recurse: yes
+        state: directory
+    - name: make tomcat symbolic
+      file:
+        src: /usr/local/apache-tomcat-7.0.76
+        dest: /usr/local/tomcat7
+        owner: tomcat
+        group: tomcat
+        state: link
+    - name: make tomcat.service
+      file:
+        path: /etc/systemd/system/tomcat.service
+        state:  touch
+    - name: edit tomcat.service
+      blockinfile:
+        dest: /etc/systemd/system/tomcat.service
+        insertafter:
+        block: |
+          [Unit]
+          Description = Apache Tomcat 7
+          After = syslog.target network.target
+          [Service]
+          User = tomcat
+          Group = tomcat
+          Type = oneshot
+          PIDFile =/usr/local/apache-tomcat-7.0.76/tomcat.pid
+          RemainAfterExit = yes
+          ExecStart =/usr/local/apache-tomcat-7.0.76/bin/startup.sh
+          ExecStop =/usr/local/apache-tomcat-7.0.76/bin/shutdown.sh
+          ExecReStart =/usr/local/apache-tomcat-7.0.76/bin/shutdown.sh;/usr/local/apache-tomcat-7.0.76/bin/startup.sh
+          [Install]
+          WantedBy = multi-user.target
+    - name: chmod 755 tomcat.service
+      file:
+        path: /etc/systemd/system/tomcat.service
+        mode:  0755
+    - name: start tomcat
+      systemd:
+        name: tomcat.service
+        state: started
+        daemon_reload: yes
+        enabled: yes
+.........................
+
+
+Commands used in ansible dynamic inventory tutorial in GCP.
+-------------------------------------------------------------
+Install google-auth module using pip. I am using pip3.
+"sudo pip3 install requests google-auth"
+
+Create a inventory directory. You can create this anywhere of your choice and change permissions.
+"sudo mkdir -p /opt/ansible/inventory"
+
+Create the YAML inventory file (gcp.yaml) and copy the below contents and please change the file according to your project and service account:
+
+---
+plugin: gcp_compute
+projects:
+          - [your_gcp_account]
+auth_kind: serviceaccount
+service_account_file: /opt/ansible/inventory/service-account.json
+keyed_groups:
+  - key: labels
+    prefix: label
+  - key: zone
+    prefix: zone
+groups:
+  remote: "'citrix' in (labels|list)"
+........
+
+Change directory permission
+
+"sudo chmod -R 755 /opt/ansible"
+ Test it!! ansible-inventory --list -i gcp.yaml
+...........................
+
+
+

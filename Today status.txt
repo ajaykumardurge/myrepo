@@ -1,0 +1,134 @@
+1.what are the hardlink and softlink in linux and purpose of the links and usages.
+
+Creating links is a kind of shortcuts to access a file.
+
+There are two types of links 
+
+one is Soft Link or Symbolic links
+second one is Hard Links
+
+Hard Links 
+ 
+  Each hard linked file is assigned the same Inode value as the original, therefore they reference the same physical file location.
+
+   Hard links more flexible and remain linked even if the original or linked files are moved throughout the file system, 
+   although hard links are unable to cross different file systems.
+
+   ls -l command shows all the links with the link column shows number of links.
+
+   Links have actual file contents Removing any link, just reduces the link count, but doesn’t affect other links.
+
+   Even if we change the filename of the original file then also the hard links properly work.
+
+   We cannot create a hard link for a directory to avoid recursive loops.
+
+   If original file is removed then the link will still show the content of the file.
+
+  The size of any of the hard link file is same as the original file and if we change the content in any of the hard links then size of all hard link files are updated.
+
+softlinks
+
+    ls -l command shows all links with first column value l? and the link points to original file.
+
+    Soft Link contains the path for original file and not the contents.
+
+    Removing soft link doesn’t affect anything but removing original file, the link becomes “dangling” link which points to nonexistent file.
+
+    A soft link can link to a directory.
+
+2.what are the copying methods available in linux from one machine to another machine (scp)
+
+ to clarify you typically don't use scp to copy a file to or from your local machine (System A) while logged in to a remote server (System B) with ssh.
+ scp will log you into the remote server, copy the file  then log you out again in one process, so just run it from a shell on your local machine.
+ That being said, you can use scp if you're logged into System B via SSH and want to copy files between System B and System C
+
+syntax
+
+scp <source> <destination>
+
+To copy a file from B to A while logged into B:
+
+scp /path/to/file username@a:/path/to/destination
+
+To copy a file from B to A while logged into A:
+
+scp username@b:/path/to/file /path/to/destinatination.
+
+
+
+3.how to moniter the last 500 lines of logfiles data
+
+I have a growing log file for which I want to display only the last 500 lines. Here is what I know I can do:
+
+tail -n 500 -F mylogfile.txt
+
+As the log file is filled, tail appends the last lines to the display.
+
+
+
+
+4.How to monitor the server performance (cpu,memory,disk,space)
+
+To list all running Linux Processes, simply type top on the command line to get the information of running tasks,
+ memory, cpu, and swap. Press ‘q‘ to quit window.
+
+
+5.what are the device files 
+
+ Under Linux and UNIX each and every hardware device treated as a file. A device file allows to accesses hardware devices so that end
+ users do not need to get technical details about hardware.
+
+ uses of device files 
+ Device file allows transparent communication between user space applications and computer hardware.
+
+ device files two files 
+
+ there are two types device files based upon the how data when written to them and read from them is proceessed by its operating systems and hardware
+
+    1.  charecter files 
+         talks to devicein a charecter by charecter single byte at a time
+         ex: virtual terminals , seral modems 
+     
+    2.block files 
+        Talks to devices 1 block at a time ( 1 block = 512 bytes to 32KB)
+      Ex: Hard disk, DVD/CD ROM, and memory regions etc.
+
+6.what is a zombie process in linux
+
+A zombie process is a process whose execution is completed but it still has an entry in the process table. 
+Zombie processes usually occur for child processes, as the parent process still needs to read its child’s exit status. 
+Once this is done using the wait system call, the zombie process is eliminated from the process table.
+This is known as reaping the zombie process.
+
+i have readed danger of zombie process and also killing the zombie process
+
+7.write shell scift for for reversing the given number
+
+n=123465
+sd=0
+rev=0
+while [ $n -gt 0 ]
+do
+    sd=$(( $n % 10 ))
+    rev=$(( $rev * 10 + $sd ))
+    n=$(( $n / 10 ))
+done
+echo "Reverse number of entered digit is $rev"
+
+
+8. write a shellscipt of two numbers without using third variables 
+
+#!/bin/bash
+echo "enter first number"
+read a
+echo "enter second number"
+read b
+echo "a before swapping is $a and b is $b"
+#swapping
+a=$((a+b))
+b=$((a - b))
+a=$((a-b))
+echo "a after swapping is  $a and b is $b"
+
+
+
